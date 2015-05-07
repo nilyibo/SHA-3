@@ -64,7 +64,7 @@ class Keccak {
     unsigned long long rot(unsigned long long x, int n)
     {
         n = n % w;
-        return ((x >> (w - n)) + (x << n)) % (1 << w); 
+        return ((x >> (w - n)) + (x << n)); 
     }
 
     /**
@@ -268,7 +268,7 @@ class Keccak {
 		   verbose: a boolean flag activating the printing of intermediate computations
 		 */
 		for(int i = 0; i < nr; ++i)
-			param = Round(param, RC[i] % (1 << w));
+			param = Round(param, RC[i]);
 
 		return param;
 	}
