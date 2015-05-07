@@ -33,11 +33,6 @@ int convertToInt(string str)
     return x; 
 }
 
-string converTableToStr(Table param)
-{
-	
-}
-
 Table Round(Table param, unsigned long long RCfixed)
 {
 	/* Perform one round of computation as defined in the Keccak-f permutation
