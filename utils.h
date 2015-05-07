@@ -3,6 +3,7 @@
 
 string upper(string s);
 string hex(unsigned long long n);
+string strToHexStr(string input);
 
 struct Table {
 	unsigned long long cell[5][5];

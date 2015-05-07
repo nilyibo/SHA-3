@@ -26,3 +26,17 @@ string hex(unsigned long long n)
     s << std::hex << n;
     return s.str();
 }
+
+string strToHexStr(string input)
+{
+    int length = input.length();
+    string output = "";
+    for (int n = 0; n < length; n++)
+    {
+        char c = input[n];
+        output += hex((unsigned long long)c);
+    }
+
+    return output;
+}
+

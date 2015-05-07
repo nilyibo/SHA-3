@@ -321,6 +321,48 @@ class Keccak {
 		return characters; 
 	}
 
+    string hash(string characters, int length, int r, int c, int n)
+    {
+        if((r < 0) || (r % 8 != 0))
+        //  throw new KeccakError("r must be a multiple of 8 in this implementation"); 
+        if(n % 8 != 0)
+        //  throw new KeccakError("outputLength must be a multiple of 8"); 
+
+        //Compute lane length (in bits)
+        int w = (r + c) / 25; 
+
+        //Initialization of state
+        Table S; 
+
+        //Padding of messages
+        string P = pad10star1(characters, length, r); 
+
+        //Absorbing phase
+        for(int i = 0; i < P.length() * 8 / 2 / r; ++i)
+        {
+            Table Pi = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/4), '0')); 
+
+            for(int y = 0; y < 5; ++y)
+                for(int x = 0; x < 5; ++x)
+                    S.cell[x][y] = pow(S.cell[x][y], Pi.cell[x][y]); 
+            S = KeccakF(S); 
+        }
+
+        //Squeezing phase
+        string Z = ""; 
+        int outputLength = n; 
+        while(outputLength > 0)
+        {
+            string str = convertTableToStr(S); 
+            Z += str.substr(0, r * 2 / 8); 
+            outputLength -= r; 
+            if(outputLength > 0)
+                S = KeccakF(S); 
+        }
+
+        return Z.substr(0, 2 * n / 8); 
+    }
+
     public: 
     //Constructions 
     Keccak() {
@@ -373,47 +415,11 @@ class Keccak {
         nr = 12 + 2 * l;
     }
 
-	string hash(string characters, int length, int r = 1024, int c = 576, int n = 1024)
-	{
-		if((r < 0) || (r % 8 != 0))
-		//	throw new KeccakError("r must be a multiple of 8 in this implementation"); 
-		if(n % 8 != 0)
-		//	throw new KeccakError("outputLength must be a multiple of 8"); 
-
-		//Compute lane length (in bits)
-		int w = (r + c) / 25; 
-
-		//Initialization of state
-		Table S; 
-
-		//Padding of messages
-		string P = pad10star1(characters, length, r); 
-
-		//Absorbing phase
-		for(int i = 0; i < P.length() * 8 / 2 / r; ++i)
-		{
-			Table Pi = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/4), '0')); 
-
-			for(int y = 0; y < 5; ++y)
-				for(int x = 0; x < 5; ++x)
-					S.cell[x][y] = pow(S.cell[x][y], Pi.cell[x][y]); 
-			S = KeccakF(S); 
-		}
-
-		//Squeezing phase
-		string Z = ""; 
-		int outputLength = n; 
-		while(outputLength > 0)
-		{
-			string str = convertTableToStr(S); 
-			Z += str.substr(0, r * 2 / 8); 
-			outputLength -= r; 
-			if(outputLength > 0)
-				S = KeccakF(S); 
-		}
-
-		return Z.substr(0, 2 * n / 8); 
-	}
-
+    string hash(string characters, int r = 1024, int c = 576, int n = 1024)
+    {
+        characters = strToHexStr(characters);
+        int length = characters.length();
+        return hash(characters, length, r, c, n);
+    }
 };
 
