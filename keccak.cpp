@@ -53,7 +53,7 @@ class Keccak {
         sprintf(format, "%%0%dX", w / 4);
         char laneHexBE_cstr[20];
         sprintf(laneHexBE_cstr, format, lane);
-		string laneHexBE(laneHexBE);
+		string laneHexBE(laneHexBE_cstr);
 
         // Perform the modification.
         string temp = "";
