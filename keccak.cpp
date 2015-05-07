@@ -344,7 +344,7 @@ class Keccak {
 
             for(int y = 0; y < 5; ++y)
                 for(int x = 0; x < 5; ++x)
-                    S.cell[x][y] = pow(S.cell[x][y], Pi.cell[x][y]); 
+                    S.cell[x][y] = S.cell[x][y] ^ Pi.cell[x][y]; 
             S = KeccakF(S); 
         }
 
