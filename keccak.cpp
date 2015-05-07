@@ -246,9 +246,8 @@ class Keccak {
 		 */
 
 		//Check the parameter n
-		if(n % 8 != 0){
-			//throw new KaccakError("n must be a multiple of 8"); 
-		}
+		if(n % 8 != 0)
+			throw new KaccakError("n must be a multiple of 8"); 
 
 		//Check the length of the provided string
 		if(characters.length() % 2 != 0)
@@ -256,9 +255,8 @@ class Keccak {
 			//vectors coding)
 			characters = characters + '0'; 
 
-		if(length > characters.length() / 2 * 8){
-			//throw new KaccakError("The string is too short to contain the number of bits announced");
-		}
+		if(length > characters.length() / 2 * 8)
+			throw new KaccakError("The string is too short to contain the number of bits announced");
 
 		int nr_bytes_filled = length / 8; 
 		int nbr_bits_filled = length % 8; 
@@ -272,8 +270,10 @@ class Keccak {
 				my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
 			my_byte = (my_byte >> (8 - nbr_bits_filled)); 
 			my_byte = my_byte + pow(2, nbr_bits_filled) + pow(2, 7); 
-			sprintf(&my_byte, "%02X", my_byte); 
-			characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
+			char* temp = (char *)malloc(1024); 
+			sprintf(temp, "%02X", my_byte); 
+			string concat = string(temp); 
+			characters = characters.substr(0, nr_bytes_filled * 2) + concat; 
 		}
 		else
 		{
@@ -283,8 +283,10 @@ class Keccak {
 				my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
 			my_byte = (my_byte >> (8 - nbr_bits_filled)); 
 			my_byte = my_byte + pow(2, nbr_bits_filled); 
-			sprintf(&my_byte, "%02X", my_byte); 
-			characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
+			char* temp = (char *)malloc(1024); 
+			sprintf(temp, "%02X", my_byte); 
+			string concat = string(temp); 
+			characters = characters.substr(0, nr_bytes_filled * 2) + concat; 
 			while((8 * characters.length() / 2) % n < (n - 8))
 			{
 				characters = characters + "00"; 
@@ -365,11 +367,11 @@ class Keccak {
 		//Absorbing phase
 		for(int i = 0; i < P.length() * 8 / 2 / r; ++i)
 		{
-			Table Pi = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), "00")); 
+			Table Pi = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/4), '0')); 
 
 			for(int y = 0; y < 5; ++y)
 				for(int x = 0; x < 5; ++x)
-					S[x][y] = pow(S[x][y], Pi.cell[x][y]); 
+					S.cell[x][y] = pow(S.cell[x][y], Pi.cell[x][y]); 
 			S = KeccakF(S); 
 		}
 
@@ -378,7 +380,7 @@ class Keccak {
 		int outputLength = n; 
 		while(outputLength > 0)
 		{
-			string str = converTableToStr(S); 
+			string str = convertTableToStr(S); 
 			Z += str.substr(0, r * 2 / 8); 
 			outputLength -= r; 
 			if(outputLength > 0)
