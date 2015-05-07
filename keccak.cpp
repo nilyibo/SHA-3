@@ -418,7 +418,7 @@ class Keccak {
     string hash(string characters, int r = 1024, int c = 576, int n = 1024)
     {
         characters = strToHexStr(characters);
-        int length = characters.length();
+        int length = characters.length() * 4;
         return hash(characters, length, r, c, n);
     }
 };
