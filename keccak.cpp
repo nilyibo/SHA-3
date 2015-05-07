@@ -17,7 +17,7 @@ public:
     {
         return message.c_str();
     }
-}
+};
 
 ostream& operator<<(ostream& os, const KeccakError& err)
 {
