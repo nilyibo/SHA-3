@@ -1,27 +1,13 @@
-#include <cstdio>
-#include <numeric>
-#include <iostream>
-#include <vector>
-#include <set>
-#include <cstring>
-#include <string>
-#include <map>
-#include <cmath>
-#include <ctime>
-#include <algorithm>
-#include <bitset>
-#include <queue>
-#include <sstream>
-#include <deque>
-#include <cassert>
 #include "utils.h"
-
-
-using namespace std; 
-
 
 class Keccak {
     private: 
+	int r; 
+	int c;
+	int w;
+	int b;
+	int l; 
+	int nr;
     /**
      * Bitwise rotation (to the left) of n bits considering the
      *      string of bits is w bits long.
@@ -85,7 +71,7 @@ class Keccak {
      * @param state State of the sponge function
      * @param info A string of characters used as identifie
      */
-    void printState(unsigned long long[][] state, string info)
+    void printState(unsigned long long[][5] state, string info)
     {
         printf("Current value of state: %s\n", info);
         for (int y = 0; y < 5; y++)
@@ -104,7 +90,7 @@ class Keccak {
      * Convert a string of bytes to its 5×5 matrix representation.
      * @param s String of bytes of hex-coded bytes (e.g. '9A2C...').
      */
-    unsigned long long[][] convertStrToTable(string s)
+    unsigned long long[][5] convertStrToTable(string s)
     {
         // Check that input parameters.
         if (this.w % 8 != 0)
