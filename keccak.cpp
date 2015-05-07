@@ -132,6 +132,35 @@ class Keccak {
         return output;
     }
 
+    /**
+     * Convert a 5×5 matrix representation to its string representation.
+     */
+    string convertTableToStr(Table t)
+    {
+        // Check input format
+        if (w % 8 != 0)
+        {
+            // TODO: throw exception "w is not a multiple of 8"
+        }
+
+        // Convert
+        string output[25];
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                output[5 * y + x] = fromLaneToHexString(t.cell[x][y]);
+            }
+        }
+
+        string retval = "";
+        for (int n = 0; n < 25; n++)
+        {
+                retval += output[n];
+        }
+
+        return upper(retval);
+    }
 
 	Table Round(Table param, unsigned long long RCfixed)
 	{
