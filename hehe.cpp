@@ -23,6 +23,16 @@ ostream& operator<<(ostream& os, const KeccakError& err)
     return os;
 }
 
+int convertToInt(string str)
+{
+	unsigned int x;   
+    std::stringstream ss;
+    ss << std::hex << str;
+    ss >> x;
+
+    return x; 
+}
+
 string pad10star1(string characters, int length, int n)
 {
 	/* Pad M with the pad10*1 padding rule to reach a length multiple of r bits
@@ -48,11 +58,35 @@ string pad10star1(string characters, int length, int n)
     int nr_bytes_filled = length / 8; 
     int nbr_bits_filled = length % 8; 
     int l = length % n; 
+    unsigned int my_byte; 
     if((n - 8) <= l && l <= (n - 2))
     {
     	if(nbr_bits_filled == 0)
-    		
+    		my_byte = 0; 
+    	else
+    		my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
+    	my_byte = (my_byte >> (8 - nbr_bits_filled)); 
+    	my_byte = my_byte + pow(2, nbr_bits_filled) + pow(2, 7); 
+    	spirntf(&my_byte, "%02X", my_byte); 
+    	characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
     }
+    else
+    {
+    	if(nbr_bits_filled == 0)
+    		my_byte = 0; 
+    	else
+    		my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
+    	my_byte = (my_byte >> (8 - nbr_bits_filled)); 
+    	my_byte = my_byte + pow(2, nbr_bits_filled); 
+    	spirntf(&my_byte, "%02X", my_byte); 
+    	characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
+    	while((8 * characters.length() / 2) % n < (n - 8))
+    	{
+    		characters = characters + '00'; 
+    	}
+    	characters = characters + '80'
+    }
+    return characters; 
 }
 
 string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 1024)
