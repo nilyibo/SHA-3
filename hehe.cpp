@@ -82,7 +82,7 @@ Table Round(Table param, unsigned long long RCfixed)
 
     Table rev = new Table(A); 
 
-    return A
+    return A;
 }
 
 Table KeccakF(Table param)
@@ -94,9 +94,9 @@ Table KeccakF(Table param)
      */
 
     for(int i = 0; i < nr; ++i)
-    	A = Round(param, RC[i] % (1 << w))
+    	A = Round(param, RC[i] % (1 << w));
 
-    return A
+    return A;
 }
 
 string pad10star1(string characters, int length, int n)
@@ -119,7 +119,7 @@ string pad10star1(string characters, int length, int n)
     	characters = characters + '0'; 
 
     if(length > characters.length() / 2 * 8)
-    	throw new KaccakError('The string is too short to contain the number of bits announced')
+    	throw new KaccakError('The string is too short to contain the number of bits announced');
 
     int nr_bytes_filled = length / 8; 
     int nbr_bits_filled = length % 8; 
