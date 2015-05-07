@@ -216,7 +216,8 @@ class Keccak {
         for (int x = 0; x < 5; ++x)
             C[x] = A[x][0] ^ A[x][1] ^ A[x][2] ^ A[x][3] ^ A[x][4];
 
-        for (int x = 0; x < 5; ++x)
+        D[0] = C[4] ^ rot(C[1], 1);
+        for (int x = 1; x < 5; ++x)
             D[x] = C[(x - 1) % 5] ^ rot(C[(x + 1) % 5], 1);
 
 		for (int x = 0; x < 5; ++x)
