@@ -1,5 +1,30 @@
 #include "utils.h"
 
+class KeccakError : public exception
+{
+private:
+    string message;
+
+public:
+    KeccakError(string msg)
+    {
+        message = msg;
+    }
+
+    virtual ~KeccakError() throw() {};
+
+    virtual const char* what() const throw()
+    {
+        return message.c_str();
+    }
+}
+
+ostream& operator<<(ostream& os, const KeccakError& err)
+{
+    os << err.getMsg() << endl;
+    return os;
+}
+
 class Keccak {
     private: 
 	unsigned long long RC[];
