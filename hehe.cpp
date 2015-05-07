@@ -78,7 +78,7 @@ Table Round(Table param, unsigned long long RCfixed)
     for (int i = 0; i < 5; ++i)
     {
     	for (int i = 0; i < 5; ++i)
-    		A[x][y] = pow(B[x][y], ((~B[(x + 1) % 5][y]) & B[(x + 2) % 5][y]); 
+    		A[x][y] = pow(B[x][y], ((~B[(x + 1) % 5][y]) & B[(x + 2) % 5][y])); 
     }
 
     //Iota step
