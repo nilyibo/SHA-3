@@ -1,5 +1,30 @@
 #include "utils.h"
 
+class KeccakError : public exception
+{
+private:
+    string message;
+
+public:
+    KeccakError(string msg)
+    {
+        message = msg;
+    }
+
+    virtual ~KeccakError() throw() {};
+
+    virtual const char* what() const throw()
+    {
+        return message.c_str();
+    }
+};
+
+ostream& operator<<(ostream& os, const KeccakError& err)
+{
+    os << err.getMsg() << endl;
+    return os;
+}
+
 class Keccak {
     private: 
 	unsigned long long RC[24];
@@ -37,7 +62,7 @@ class Keccak {
     {
         if (s.length() % 2 != 0)
         {
-            // TODO: throw exception "The provided string does not end with a full byte"
+            throw new KeccakError("The provided string does not end with a full byte");
         }
 
         string temp = "";
@@ -107,13 +132,12 @@ class Keccak {
         // Check that input parameters.
         if (w % 8 != 0)
         {
-            // Raise exception. "w is not a multiple of 8"
+            throw new KeccakError("w is not a multiple of 8");
         }
 
         if (s.length() != 2 * b / 8)
         {
-            // Raise exception. "string can't be divided in 25 blocks of w bits\
-            // i.e. string must have exactly b bits"
+            throw new KeccakError("string can't be divided in 25 blocks of w b    its, i.e. string must have exactly b bits");
         }
 
         // Convert
@@ -140,7 +164,7 @@ class Keccak {
         // Check input format
         if (w % 8 != 0)
         {
-            // TODO: throw exception "w is not a multiple of 8"
+            throw new KeccakError("w is not a multiple of 8");
         }
 
         // Convert
@@ -294,6 +318,60 @@ class Keccak {
 			characters = characters + "80";
 		}
 		return characters; 
+	}
+
+	string hash(string characters, int length, int r = 1024, int c = 576, int n = 1024)
+	{
+		/*
+		 * Compute the Keccak[r,c,d] sponge function on message M
+
+		characters: string of hex characters ('9AFC...')
+		length: length in bits
+		r: bitrate in bits (defautl: 1024), shall be defined in the class
+		c: capacity in bits (default: 576), shall be defined in the class
+		n: length of output in bits (default: 1024),
+		verbose: print the details of computations(default:False)
+		*/
+
+		if(r < 0) || (r % 8 != 0)
+			throw new KeccakError("r must be a multiple of 8 in this implementation"); 
+		if(n % 8 != 0)
+			throw new KeccakError("outputLength must be a multiple of 8"); 
+
+		//Compute lane length (in bits)
+		w = (r + c) / 25; 
+
+		//Initialization of state
+		Table S; 
+
+		//Padding of messages
+		string P = pad10star1(characters, length, r); 
+
+		//Absorbing phase
+		for(int i = 0; i < P.length * 8 / 2 / r; ++i)
+		{
+			Table table = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), "00")); 
+			Pi = table.cell; 
+
+			for(int y = 0; y < 5; ++y)
+				for(int x = 0; x < 5; ++x)
+					S[x][y] = pow(S[x][y], Pi[x][y]); 
+			S = KeccakF(S); 
+		}
+
+		//Squeezing phase
+		string Z = ""; 
+		int outputLength = n; 
+		while(outputLength > 0)
+		{
+			string str = converTableToStr(S); 
+			Z += str.substr(0, r * 2 / 8); 
+			outputLength -= r; 
+			if(outputLength > 0)
+				S = KeccakF(S).cell; 
+		}
+
+		return Z.substr(0, 2 * n / 8); 
 	}
 
     public: 
