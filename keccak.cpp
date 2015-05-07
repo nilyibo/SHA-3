@@ -376,9 +376,9 @@ class Keccak {
 	string hash(string characters, int length, int r = 1024, int c = 576, int n = 1024)
 	{
 		if((r < 0) || (r % 8 != 0))
-		//	throw new KeccakError("r must be a multiple of 8 in this implementation"); 
+			throw new KeccakError("r must be a multiple of 8 in this implementation"); 
 		if(n % 8 != 0)
-		//	throw new KeccakError("outputLength must be a multiple of 8"); 
+			throw new KeccakError("outputLength must be a multiple of 8"); 
 
 		//Compute lane length (in bits)
 		int w = (r + c) / 25; 
