@@ -5,17 +5,18 @@ using namespace std;
 
 class KeccakError: public exception
 {
-	string err; 
-	virtual KeccakError(string message)
-	{
-		err = message; 
-	}
+    string message; 
 
-	virtual const string getMsg()
-	{
-		return err; 
-	}
-}; 
+public:
+    KeccakError(string msg){ message = msg; }; 
+
+    virtual ~KeccakError() throw() {}; 
+
+    virtual const char* what() const throw()
+    {
+        return message.c_str(); 
+    }
+};
 
 ostream& operator<<(ostream& os, const KeccakError& err)
 {
