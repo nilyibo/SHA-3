@@ -23,6 +23,38 @@ ostream& operator<<(ostream& os, const KeccakError& err)
     return os;
 }
 
+string pad10star1(string characters, int length, int n)
+{
+	/* Pad M with the pad10*1 padding rule to reach a length multiple of r bits
+       characters: message string of hex characters ('9AFC...')
+       length: 
+       n: length in bits (must be a multiple of 8)
+       Example: pad10star1('BA594E0FB9EBBD30', 60, 8, returns 'BA594E0FB9EBBD93' 
+     */
+
+    //Check the parameter n
+    if(n % 8 != 0)
+    	throw new KaccakError("n must be a multiple of 8"); 
+
+    //Check the length of the provided string
+    if(characters.length() % 2 != 0)
+    	//Pad with one '0' to reach correct length (don't know test
+        //vectors coding)
+    	characters = characters + '0'; 
+
+    if(length > characters.length() / 2 * 8)
+    	throw new KaccakError('The string is too short to contain the number of bits announced')
+
+    int nr_bytes_filled = length / 8; 
+    int nbr_bits_filled = length % 8; 
+    int l = length % n; 
+    if((n - 8) <= l && l <= (n - 2))
+    {
+    	if(nbr_bits_filled == 0)
+    		
+    }
+}
+
 string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 1024)
 {
 	"""Compute the Keccak[r,c,d] sponge function on message M
