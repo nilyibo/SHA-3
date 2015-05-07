@@ -23,6 +23,87 @@ ostream& operator<<(ostream& os, const KeccakError& err)
     return os;
 }
 
+int convertToInt(string str)
+{
+	unsigned int x;   
+    std::stringstream ss;
+    ss << std::hex << str;
+    ss >> x;
+
+    return x; 
+}
+
+string converTableToStr(Table param)
+{
+	
+}
+
+Table Round(Table param, unsigned long long RCfixed)
+{
+	/* Perform one round of computation as defined in the Keccak-f permutation
+
+       A: current state (5×5 matrix)
+       RCfixed: value of round constant to use (integer)
+      */
+
+    unsigned long long A[][] = param.cell; 
+    unsigned long long B[][] = new unsigned long long[5][5]; 
+    unsigned long long C[] = new unsigned long long[5]; 
+    unsigned long long D[] = new unsigned long long[5]; 
+
+    for (int i = 0; i < 5; ++i)
+    {
+    	C[i] = 0; 
+    	D[i] = 0; 
+    	for (int j = 0; j < 5; ++j)
+    	{
+    		B[i][j] = 0; 
+    	}
+    }
+
+    //Theta step
+    for (int x = 0; x < 5; ++x)
+    	C[x] = pow(A[x][0], pow(A[x][1], pow(A[x][2], pow(A[x][3], A[x][4])))); 
+
+    for (int x = 0; x < count; ++x)
+    	D[x] = pow(C[(x - 1) % 5], rot(C[(x + 1) % 5], 1)); 
+
+    for (int x = 0; x < 5; ++x)
+    	for (int y = 0; y < 5; ++y)
+    		A[x][y] = pow(A[x][y], D[x]); 
+
+    //Rho and Pi steps
+    for (int i = 0; i < 5; ++i)
+    	for (int i = 0; i < 5; ++i)
+    		B[y][(2 * x + 3 * y) % 5] = rot(A[x][y], r[x][y]); 
+
+    //Chi step
+    for (int i = 0; i < 5; ++i)
+    	for (int i = 0; i < 5; ++i)
+    		A[x][y] = pow(B[x][y], ((~B[(x + 1) % 5][y]) & B[(x + 2) % 5][y]); 
+
+    //Iota step
+    A[0][0] = pow(A[0][0], RCfixed); 
+
+    Table rev = new Table(A); 
+
+    return A
+}
+
+Table KeccakF(Table param)
+{
+	/* Perform Keccak-f function on the state A
+
+       A: 5×5 matrix containing the state
+       verbose: a boolean flag activating the printing of intermediate computations
+     */
+
+    for(int i = 0; i < nr; ++i)
+    	A = Round(param, RC[i] % (1 << w))
+
+    return A
+}
+
 string pad10star1(string characters, int length, int n)
 {
 	/* Pad M with the pad10*1 padding rule to reach a length multiple of r bits
@@ -48,11 +129,35 @@ string pad10star1(string characters, int length, int n)
     int nr_bytes_filled = length / 8; 
     int nbr_bits_filled = length % 8; 
     int l = length % n; 
+    unsigned int my_byte; 
     if((n - 8) <= l && l <= (n - 2))
     {
     	if(nbr_bits_filled == 0)
-    		
+    		my_byte = 0; 
+    	else
+    		my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
+    	my_byte = (my_byte >> (8 - nbr_bits_filled)); 
+    	my_byte = my_byte + pow(2, nbr_bits_filled) + pow(2, 7); 
+    	spirntf(&my_byte, "%02X", my_byte); 
+    	characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
     }
+    else
+    {
+    	if(nbr_bits_filled == 0)
+    		my_byte = 0; 
+    	else
+    		my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
+    	my_byte = (my_byte >> (8 - nbr_bits_filled)); 
+    	my_byte = my_byte + pow(2, nbr_bits_filled); 
+    	spirntf(&my_byte, "%02X", my_byte); 
+    	characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
+    	while((8 * characters.length() / 2) % n < (n - 8))
+    	{
+    		characters = characters + '00'; 
+    	}
+    	characters = characters + '80'
+    }
+    return characters; 
 }
 
 string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 1024)
@@ -76,7 +181,7 @@ string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 
 	w = (r + c) / 25; 
 
 	//Initialization of state
-	S = double[5][5]; 
+	S = unsigned long long[5][5]; 
 
 	//Padding of messages
 	string P = pad10star1(characters, length, r); 
@@ -84,7 +189,8 @@ string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 
 	//Absorbing phase
 	for(int i = 0; i < P.length * 8 / 2 / r; ++i)
 	{
-		double[][] Pi = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), '00')); 
+		Table table = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), '00')); 
+		Pi = table.cell; 
 
 		for(int y = 0; y < 5; ++y)
 			for(int x = 0; x < 5; ++x)
@@ -101,7 +207,7 @@ string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 
 		Z += str.substr(0, r * 2 / 8); 
 		outputLength -= r; 
 		if(outputLength > 0)
-			S = KeccakF(S); 
+			S = KeccakF(S).cell; 
 	}
 
 	return Z.substr(0, 2 * n / 8); 
