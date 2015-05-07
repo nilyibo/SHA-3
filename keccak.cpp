@@ -62,7 +62,7 @@ class Keccak {
     {
         if (s.length() % 2 != 0)
         {
-            // TODO: throw exception "The provided string does not end with a full byte"
+            throw new KeccakError("The provided string does not end with a full byte");
         }
 
         string temp = "";
@@ -132,13 +132,12 @@ class Keccak {
         // Check that input parameters.
         if (w % 8 != 0)
         {
-            // Raise exception. "w is not a multiple of 8"
+            throw new KeccakError("w is not a multiple of 8");
         }
 
         if (s.length() != 2 * b / 8)
         {
-            // Raise exception. "string can't be divided in 25 blocks of w bits\
-            // i.e. string must have exactly b bits"
+            throw new KeccakError("string can't be divided in 25 blocks of w b    its, i.e. string must have exactly b bits");
         }
 
         // Convert
@@ -165,7 +164,7 @@ class Keccak {
         // Check input format
         if (w % 8 != 0)
         {
-            // TODO: throw exception "w is not a multiple of 8"
+            throw new KeccakError("w is not a multiple of 8");
         }
 
         // Convert
@@ -272,7 +271,7 @@ class Keccak {
 
 		//Check the parameter n
 		if(n % 8 != 0)
-			//throw new KaccakError("n must be a multiple of 8"); 
+			throw new KaccakError("n must be a multiple of 8"); 
 
 		//Check the length of the provided string
 		if(characters.length() % 2 != 0)
@@ -281,7 +280,7 @@ class Keccak {
 			characters = characters + '0'; 
 
 		if(length > characters.length() / 2 * 8)
-			//throw new KaccakError("The string is too short to contain the number of bits announced");
+			throw new new KaccakError("The string is too short to contain the number of bits announced");
 
 		int nr_bytes_filled = length / 8; 
 		int nbr_bits_filled = length % 8; 
@@ -331,9 +330,9 @@ class Keccak {
 		*/
 
 		if(r < 0) || (r % 8 != 0)
-		//	throw new KeccakError("r must be a multiple of 8 in this implementation"); 
+			throw new KeccakError("r must be a multiple of 8 in this implementation"); 
 		if(n % 8 != 0)
-		//	throw new KeccakError("outputLength must be a multiple of 8"); 
+			throw new KeccakError("outputLength must be a multiple of 8"); 
 
 		//Compute lane length (in bits)
 		w = (r + c) / 25; 
