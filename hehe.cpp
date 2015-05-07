@@ -178,13 +178,12 @@ string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 
     //Absorbing phase
     for(int i = 0; i < P.length() * 8 / 2 / r; ++i)
     {
-        Table table = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), "00")); 
-        unsigned long long Pi[5][5] = Table.cell; 
+        Table Pi = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), "00")); 
 
         for(int y = 0; y < 5; ++y)
             for(int x = 0; x < 5; ++x)
-                S[x][y] = pow(S[x][y], Pi[x][y]); 
-        S = KeccakF(S); 
+                S[x][y] = pow(S[x][y], Pi.cell[x][y]); 
+        Table S = KeccakF(S); 
     }
 
     //Squeezing phase
