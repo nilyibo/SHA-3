@@ -14,8 +14,8 @@ class Keccak {
      */
     unsigned long long rot(unsigned long long x, int n)
     {
-        n = n % this.w;
-        return ((x >> (this.w - n)) + (x << n)) % (1 << this.w); 
+        n = n % w;
+        return ((x >> (w - n)) + (x << n)) % (1 << w); 
     }
 
     /**
@@ -49,10 +49,11 @@ class Keccak {
      */
     string fromLaneToHexString(unsigned long long lane)
     {
-        string format;
-        sprintf(format, "%%0%dX", this.w / 4);
-        string laneHexBE;
-        sprintf(laneHexBE, format, lane);
+		char format[20];
+        sprintf(format, "%%0%dX", w / 4);
+        char laneHexBE_cstr[20];
+        sprintf(laneHexBE_cstr, format, lane);
+		string laneHexBE(laneHexBE);
 
         // Perform the modification.
         string temp = "";
@@ -71,55 +72,48 @@ class Keccak {
      * @param state State of the sponge function
      * @param info A string of characters used as identifie
      */
-    void printState(unsigned long long[][5] state, string info)
+    void printState(Table state, string info)
     {
-        printf("Current value of state: %s\n", info);
+		cout << "Current value of state: " << info << endl;
         for (int y = 0; y < 5; y++)
         {
             string line = "";
             for (int x = 0; x < 5; x++)
             {
-                line += "\t" + hex(state[x][y]);
+                line += "\t" + hex(state.cell[x][y]);
             }
-
-            printf("\t%s", line);
-        }
-    }
+			cout << line << endl;
+		}
+	}
 
     /**
      * Convert a string of bytes to its 5×5 matrix representation.
      * @param s String of bytes of hex-coded bytes (e.g. '9A2C...').
      */
-    unsigned long long[][5] convertStrToTable(string s)
+    Table convertStrToTable(string s)
     {
         // Check that input parameters.
-        if (this.w % 8 != 0)
+        if (w % 8 != 0)
         {
             // Raise exception. "w is not a multiple of 8"
         }
 
-        if (s.length() != 2 * this.b / 8)
+        if (s.length() != 2 * b / 8)
         {
             // Raise exception. "string can't be divided in 25 blocks of w bits\
             // i.e. string must have exactly b bits"
         }
 
         // Convert
-        unsigned long long[5][5] output = {
-            {0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0}
-        };
+		Table output;
 
         for (int x = 0; x < 5; x++)
         {
             for (int y = 0; y < 5; y++)
             {
-                int offset = 2 * ((5 * y + x) * this.w) / 8;
-                output[x][y] = this.fromHexStringToLane(
-                                    s.substr(offset, 2 * this.w / 8))
+                int offset = 2 * ((5 * y + x) * w) / 8;
+                output.cell[x][y] = fromHexStringToLane(
+                                    s.substr(offset, 2 * w / 8));
             }
         }
 
@@ -128,19 +122,19 @@ class Keccak {
 
     public: 
     //Constructions 
-    public Keccak() {
+    Keccak() {
     }
 
     /**
      * Set the value of the parameter b (and thus w,l and nr).
      * @param b Must be choosen among [25, 50, 100, 200, 400, 800, 1600]
      */
-    void setB(int b)
+    void setB(int _b)
     {
-        this.b = b;
-        this.w = b / 25;
-        this.l = (int)log2(this.w);
-        this.nr = 12 + 2 * this.l;
+        b = _b;
+        w = b / 25;
+        l = (int)log2(w);
+        nr = 12 + 2 * l;
     }
 
 };
