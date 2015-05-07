@@ -51,9 +51,7 @@ Table Round(Table param, unsigned long long RCfixed)
     	C[i] = 0; 
     	D[i] = 0; 
     	for (int j = 0; j < 5; ++j)
-    	{
     		B[i][j] = 0; 
-    	}
     }
 
     //Theta step
@@ -64,18 +62,24 @@ Table Round(Table param, unsigned long long RCfixed)
     	D[x] = pow(C[(x - 1) % 5], rot(C[(x + 1) % 5], 1)); 
 
     for (int x = 0; x < 5; ++x)
+    {
     	for (int y = 0; y < 5; ++y)
     		A[x][y] = pow(A[x][y], D[x]); 
+    }
 
     //Rho and Pi steps
     for (int i = 0; i < 5; ++i)
+    {
     	for (int i = 0; i < 5; ++i)
     		B[y][(2 * x + 3 * y) % 5] = rot(A[x][y], r[x][y]); 
+    }
 
     //Chi step
     for (int i = 0; i < 5; ++i)
+    {
     	for (int i = 0; i < 5; ++i)
     		A[x][y] = pow(B[x][y], ((~B[(x + 1) % 5][y]) & B[(x + 2) % 5][y]); 
+    }
 
     //Iota step
     A[0][0] = pow(A[0][0], RCfixed); 
