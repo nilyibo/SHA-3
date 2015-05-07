@@ -101,7 +101,7 @@ class Keccak {
     string fromLaneToHexString(unsigned long long lane)
     {
 		char format[20];
-        sprintf(format, "%%0%dX", w / 4);
+        sprintf(format, "%%0%ulX", w / 4);
         char laneHexBE_cstr[20];
         sprintf(laneHexBE_cstr, format, lane);
 		string laneHexBE(laneHexBE_cstr);
