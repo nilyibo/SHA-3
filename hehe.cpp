@@ -161,55 +161,45 @@ string pad10star1(string characters, int length, int n)
 
 string Keccak(string characters, int length, int r = 1024, int c = 576, int n = 1024)
 {
-	"""Compute the Keccak[r,c,d] sponge function on message M
+    if((r < 0) || (r % 8 != 0))
+        throw new KeccakError("r must be a multiple of 8 in this implementation"); 
+    if(n % 8 != 0)
+        throw new KeccakError("outputLength must be a multiple of 8"); 
 
-    characters: string of hex characters ('9AFC...')
-    length: length in bits
-    r: bitrate in bits (defautl: 1024), shall be defined in the class
-    c: capacity in bits (default: 576), shall be defined in the class
-    n: length of output in bits (default: 1024),
-    verbose: print the details of computations(default:False)
-    """
+    //Compute lane length (in bits)
+    int w = (r + c) / 25; 
 
-	if(r < 0) || (r % 8 != 0)
-		throw new KeccakError('r must be a multiple of 8 in this implementation'); 
-	if(n % 8 != 0)
-		throw new KeccakError('outputLength must be a multiple of 8'); 
+    //Initialization of state
+    unsigned long long S[5][5]; 
 
-	//Compute lane length (in bits)
-	w = (r + c) / 25; 
+    //Padding of messages
+    string P = pad10star1(characters, length, r); 
 
-	//Initialization of state
-	S = unsigned long long[5][5]; 
+    //Absorbing phase
+    for(int i = 0; i < P.length() * 8 / 2 / r; ++i)
+    {
+        Table table = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), "00")); 
+        unsigned long long Pi[5][5] = Table.cell; 
 
-	//Padding of messages
-	string P = pad10star1(characters, length, r); 
+        for(int y = 0; y < 5; ++y)
+            for(int x = 0; x < 5; ++x)
+                S[x][y] = pow(S[x][y], Pi[x][y]); 
+        S = KeccakF(S); 
+    }
 
-	//Absorbing phase
-	for(int i = 0; i < P.length * 8 / 2 / r; ++i)
-	{
-		Table table = convertStrToTable(P.substr(i * (2 * r / 8), (2 * r / 8)) + string((c/8), '00')); 
-		Pi = table.cell; 
+    //Squeezing phase
+    string Z = ""; 
+    int outputLength = n; 
+    while(outputLength > 0)
+    {
+        string str = converTableToStr(S); 
+        Z += str.substr(0, r * 2 / 8); 
+        outputLength -= r; 
+        if(outputLength > 0)
+            S = KeccakF(S).cell; 
+    }
 
-		for(int y = 0; y < 5; ++y)
-			for(int x = 0; x < 5; ++x)
-				S[x][y] = pow(S[x][y], Pi[x][y]); 
-		S = KeccakF(S); 
-	}
-
-	//Squeezing phase
-	string Z = ''; 
-	int outputLength = n; 
-	while(outputLength > 0)
-	{
-		string str = converTableToStr(S); 
-		Z += str.substr(0, r * 2 / 8); 
-		outputLength -= r; 
-		if(outputLength > 0)
-			S = KeccakF(S).cell; 
-	}
-
-	return Z.substr(0, 2 * n / 8); 
+    return Z.substr(0, 2 * n / 8); 
 }
 
 
