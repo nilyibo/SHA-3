@@ -213,16 +213,16 @@ class Keccak {
 		}
 
 		//Theta step
-		for (int x = 0; x < 5; ++x)
-			C[x] = pow(A[x][0], pow(A[x][1], pow(A[x][2], pow(A[x][3], A[x][4])))); 
+        for (int x = 0; x < 5; ++x)
+            C[x] = A[x][0] ^ A[x][1] ^ A[x][2] ^ A[x][3] ^ A[x][4];
 
-		for (int x = 0; x < 5; ++x)
-			D[x] = pow(C[(x - 1) % 5], rot(C[(x + 1) % 5], 1)); 
+        for (int x = 0; x < 5; ++x)
+            D[x] = C[(x - 1) % 5] ^ rot(C[(x + 1) % 5], 1);
 
 		for (int x = 0; x < 5; ++x)
 		{
 			for (int y = 0; y < 5; ++y)
-				A[x][y] = pow(A[x][y], D[x]); 
+				A[x][y] = A[x][y] ^ D[x]; 
 		}
 
 		//Rho and Pi steps
@@ -236,11 +236,11 @@ class Keccak {
 		for (int x = 0; x < 5; ++x)
 		{
 			for (int y = 0; y < 5; ++y)
-				A[x][y] = pow(B[x][y], ((~B[(x + 1) % 5][y]) & B[(x + 2) % 5][y]));
+				A[x][y] = B[x][y] ^ ((~B[(x + 1) % 5][y]) & B[(x + 2) % 5][y]);
 		}
 
 		//Iota step
-		A[0][0] = pow(A[0][0], RCfixed); 
+		A[0][0] = A[0][0] ^ RCfixed; 
 
 		Table rev(A); 
 
