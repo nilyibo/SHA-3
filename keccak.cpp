@@ -328,6 +328,8 @@ class Keccak {
         if(n % 8 != 0)
             throw new KeccakError("outputLength must be a multiple of 8"); 
 
+        setB(r + c);
+
         //Compute lane length (in bits)
         int w = (r + c) / 25; 
 
