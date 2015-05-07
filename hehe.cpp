@@ -138,7 +138,9 @@ string pad10star1(string characters, int length, int n)
     		my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
     	my_byte = (my_byte >> (8 - nbr_bits_filled)); 
     	my_byte = my_byte + pow(2, nbr_bits_filled) + pow(2, 7); 
-    	spirntf(&my_byte, "%02X", my_byte); 
+    	char* temp = (char *)malloc(1024); 
+        sprintf(temp, "%02X", my_byte); 
+        string concat = string(temp); 
     	characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
     }
     else
@@ -149,7 +151,9 @@ string pad10star1(string characters, int length, int n)
     		my_byte = convertToInt(characters.substr(nr_bytes_filled * 2, 2)); 
     	my_byte = (my_byte >> (8 - nbr_bits_filled)); 
     	my_byte = my_byte + pow(2, nbr_bits_filled); 
-    	spirntf(&my_byte, "%02X", my_byte); 
+    	char* temp = (char *)malloc(1024); 
+        sprintf(temp, "%02X", my_byte); 
+        string concat = string(temp); 
     	characters = characters.substr(0, nr_bytes_filled * 2) + my_byte; 
     	while((8 * characters.length() / 2) % n < (n - 8))
     	{
