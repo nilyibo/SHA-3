@@ -46,6 +46,18 @@ class Keccak {
 	}
 
     /**
+     * Set the value of the parameter b (and thus w,l and nr).
+     * @param b Must be choosen among [25, 50, 100, 200, 400, 800, 1600]
+     */
+    void setB(int _b)
+    {
+        b = _b;
+        w = b / 25;
+        l = (int)log2(w);
+        nr = 12 + 2 * l;
+    }
+
+    /**
      * Bitwise rotation (to the left) of n bits considering the
      *      string of bits is w bits long.
      */
@@ -216,7 +228,8 @@ class Keccak {
         for (int x = 0; x < 5; ++x)
             C[x] = A[x][0] ^ A[x][1] ^ A[x][2] ^ A[x][3] ^ A[x][4];
 
-        for (int x = 0; x < 5; ++x)
+        D[0] = C[4] ^ rot(C[1], 1);
+        for (int x = 1; x < 5; ++x)
             D[x] = C[(x - 1) % 5] ^ rot(C[(x + 1) % 5], 1);
 
 		for (int x = 0; x < 5; ++x)
@@ -403,18 +416,6 @@ class Keccak {
 			0x8000000080008008
 		};
 		memcpy(RC, _RC, sizeof(unsigned long long) * 24);
-    }
-
-    /**
-     * Set the value of the parameter b (and thus w,l and nr).
-     * @param b Must be choosen among [25, 50, 100, 200, 400, 800, 1600]
-     */
-    void setB(int _b)
-    {
-        b = _b;
-        w = b / 25;
-        l = (int)log2(w);
-        nr = 12 + 2 * l;
     }
 
     string hash(string characters, int r = 1024, int c = 576, int n = 1024)
