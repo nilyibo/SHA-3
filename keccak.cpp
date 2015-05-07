@@ -64,6 +64,8 @@ class Keccak {
     unsigned long long rot(unsigned long long x, int n)
     {
         n = n % w;
+		if(n == 0 || n == 64)
+			return x;
         return ((x >> (w - n)) + (x << n)); 
     }
 
