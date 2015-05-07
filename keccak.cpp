@@ -329,7 +329,7 @@ class Keccak {
 			throw new KeccakError("outputLength must be a multiple of 8"); 
 
 		//Compute lane length (in bits)
-		int w = (r + c) / 25; 
+		w = (r + c) / 25; 
 
 		//Initialization of state
 		Table S; 
